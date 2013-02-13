@@ -28,6 +28,7 @@ module ExtractContent
     :punctuation_weight => 10,                                        # 句読点に対するスコア
     :punctuations => /([、。，．！？]|\.[^A-Za-z0-9]|,[^0-9]|!|\?)/,  # 句読点
     :waste_expressions => /Copyright|All Rights Reserved/i,           # フッターに含まれる特徴的なキーワードを指定
+    :dom_separator => '',                                             # DOM間に挿入する文字列を指定
     :debug => false,                                                  # true の場合、ブロック情報を標準出力に
   }
 
@@ -57,7 +58,7 @@ module ExtractContent
     # option parameters
     opt = if opt then @default.merge(opt) else @default end
     b = binding   # local_variable_set があれば……
-    threshold=min_length=decay_factor=continuous_factor=punctuation_weight=punctuations=waste_expressions=debug=nil
+    threshold=min_length=decay_factor=continuous_factor=punctuation_weight=punctuations=waste_expressions=dom_separator=debug=nil
     opt.each do |key, value|
       eval("#{key.id2name} = opt[:#{key.id2name}]", b) 
     end
@@ -122,7 +123,7 @@ module ExtractContent
     end
     bodylist << [body, score]
     body = bodylist.inject{|a,b| if a[1]>=b[1] then a else b end }
-    [strip_tags(body[0]), title]
+    [strip_tags(body[0], dom_separator), title]
   end
 
   # Extracts title.
@@ -189,8 +190,8 @@ module ExtractContent
   end
 
   # Strips tags from html.
-  def self.strip_tags(html)
-    st = html.gsub(/<.+?>/m, '')
+  def self.strip_tags(html, separator = '')
+    st = html.gsub(/<.+?>/m, separator)
     # Convert from wide character to ascii
     st.gsub!(/([\357\274\201-\357\274\272])/){($1.bytes.to_a[2]-96).chr} # symbols, 0-9, A-Z
     st.gsub!(/([\357\275\201-\357\275\232])/){($1.bytes.to_a[2]-32).chr} # a-z
