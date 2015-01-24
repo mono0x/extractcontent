@@ -1,35 +1,35 @@
 # ExtractContent
 
-ExtractContent for Ruby 1.9
+ExtractContent for Ruby 1.9+
 
 ## Installation
 
-Install bundler.
+Edit Gemfile.
 
-    gem install bundler
-    bundle init
-    vi Gemfile
+    $ vi Gemfile
 
-Add the following line to Gemfile.
+Add a following line to Gemfile.
 
-    gem 'extractcontent', :git => 'https://github.com/mono0x/extractcontent.git'
+```ruby
+gem 'extractcontent', github: 'mono0x/extractcontent'
+```
 
 Install the gem.
 
-    bundle install
+    $ bundle install
 
 ## Usage
 
-    # coding: utf-8
+```ruby
+require 'bundler/setup'
+require 'extractcontent'
 
-    require 'bundler/setup'
-    require 'extractcontent'
+html = ...
+content, title = ExtractContent.analyse(html)
 
-    html = ...
-    content, title = ExtractContent.analyse(html)
-
-    puts title
-    puts content
+puts title
+puts content
+```
 
 ## License
 
